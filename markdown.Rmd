@@ -1,0 +1,50 @@
+---
+title: "Html_page"
+author: "Seif"
+date: "2024-11-18"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(carData)
+df<-TitanicSurvival
+summary(df)
+plot(df$survived~df$sex, col=c("orange","lightgreen"))
+plot(df$survived~df$passengerClass)
+plot(df$age~df$survived)
+library(ggplot2)
+
+ggplot(df, aes(survived,fill=sex)) +
+  geom_bar(position = "dodge",width = 0.4)+
+  theme_minimal()
+
+ggplot(df, aes(passengerClass,fill=survived)) +
+  geom_bar(position = "dodge",width = 0.3)+
+  scale_fill_brewer(palette = "Blues")
+
+ggplot(df, aes(survived,age)) +
+  geom_boxplot() +
+  theme_minimal()
+y<-as.numeric(df$survived)-1
+summary(glm(y~age+sex+passengerClass , data=df,family = binomial(link = "logit")))
+
+#Création d’un Package R avec des fonctions d’Analyse
+taux_survie_sex <- function(data) {
+  library(dplyr)
+  return(data %>%
+    group_by(sex) %>%
+    summarize(TauxSurvie = sum(survived == "yes") / n()))
+}
+
+taux_survie_class <- function(data) {
+  library(dplyr)
+  return(data %>%
+           group_by(passengerClass) %>%
+           summarize(TauxSurvie = sum(survived == "yes") / n()))
+}
+
+
+```
